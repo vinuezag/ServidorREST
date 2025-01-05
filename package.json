@@ -1,0 +1,14 @@
+{
+  "name": "servidorrest",
+  "version": "1.0.0",
+  "description": "servicios rest",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gordillo y Vinueza",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
