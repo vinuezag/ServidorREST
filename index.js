@@ -20,6 +20,34 @@ app.post('/guardar-json', (req, res) => {
     res.status(200).json({ mensaje: 'JSON guardado exitosamente', lista });
 });
 
+// Ruta para buscar un registro por cédula
+app.get('/buscar-registro/:cedula', (req, res) => {
+    const cedula = req.params.cedula;
+    const registroEncontrado = lista.find(registro => registro.cedula === cedula);
+
+    if (registroEncontrado) {
+        res.status(200).json(registroEncontrado);
+    } else {
+        res.status(404).json({ mensaje: 'Registro no encontrado' });
+    }
+});
+
+app.put('/actualizar-correo/:cedula', (req, res) => {
+    const cedula = req.params.cedula;
+    const nuevoCorreo = req.body.correo; // Suponiendo que el nuevo correo se envía en el cuerpo de la solicitud
+
+    // Buscar el registro correspondiente
+    const registroEncontrado = lista.find(registro => registro.cedula === cedula);
+
+    if (registroEncontrado) {
+        // Actualizar el correo electrónico
+        registroEncontrado.correo = nuevoCorreo;
+        res.status(200).json({ mensaje: 'Correo actualizado con éxito', registro: registroEncontrado });
+    } else {
+        res.status(404).json({ mensaje: 'Registro no encontrado' });
+    }
+});
+
 // Servidor escuchando en el puerto 3000
 app.listen(3000, () => {
     console.log('La solicitud fue realizada por el puerto 3000'); // Notificación del inicio del server
