@@ -30,9 +30,15 @@ app.all('*', (req, res, next) => {
             return res.status(400).json({ mensaje: 'El campo "cedula" es obligatorio y debe ser una cadena de texto' });
         }
 
-        if (!json.nombre || typeof json.nombre !== 'string') {
-            return res.status(400).json({ mensaje: 'El campo "nombre" es obligatorio y debe ser una cadena de texto' });
+        // Verificar que la cédula tenga exactamente 10 dígitos
+        if (json.cedula.length !== 10 || !/^\d{10}$/.test(json.cedula)) {
+            return res.status(400).json({ mensaje: 'El campo "cedula" debe tener exactamente 10 dígitos numéricos' });
         }
+
+        if (!json.nombre || typeof json.nombre !== 'string' || !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(json.nombre)) {
+            return res.status(400).json({ mensaje: 'El campo "nombre" es obligatorio y debe ser una cadena de texto que contenga solo letras, acentos y espacios' });
+        }
+        
 
         if (!json.correo || typeof json.correo !== 'string' || !/\S+@\S+\.\S+/.test(json.correo)) {
             return res.status(400).json({ mensaje: 'El campo "correo" es obligatorio y debe ser una dirección de correo válida' });
@@ -45,11 +51,18 @@ app.all('*', (req, res, next) => {
         if (!json.zona || typeof json.zona !== 'string') {
             return res.status(400).json({ mensaje: 'El campo "zona" es obligatorio y debe ser una cadena de texto' });
         }
+
+        // Verificar si la cédula ya está registrada
+        const cedulaExistente = lista.find(item => item.cedula === json.cedula);
+        if (cedulaExistente) {
+            return res.status(400).json({ mensaje: 'La cédula ya está registrada' });
+        }
     }
 
     console.log(`Método: ${req.method}, Ruta: ${req.path}`);
     next();
 });
+
 
 // Ruta para manejar el POST y guardar el JSON en la lista
 app.post('/guardar-json', (req, res) => {
@@ -74,6 +87,20 @@ app.get('/buscar-registro/:cedula', (req, res) => {
     } else {
         res.status(404).json({ mensaje: 'Registro no encontrado' });
     }
+});
+app.put('*', (req, res, next) => {
+    // Validación del JSON solo si el método es PUT
+    if (req.is('application/json')) {
+        const json = req.body;
+
+        // Verificar que el campo "correo" esté presente y sea válido
+        if (!json.correo || typeof json.correo !== 'string' || !/\S+@\S+\.\S+/.test(json.correo)) {
+            return res.status(400).json({ mensaje: 'El campo "correo" es obligatorio y debe ser una dirección de correo válida' });
+        }
+    }
+
+    console.log(`Método: ${req.method}, Ruta: ${req.path}`);
+    next();
 });
 
 // Ruta para actualizar el correo de un registro por cédula
