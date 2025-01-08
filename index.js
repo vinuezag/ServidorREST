@@ -10,7 +10,7 @@ let entregados = [];  // Lista de registros entregados
 
 // Método all para manejar todas las solicitudes y registrar el acceso
 app.all('*', (req, res, next) => {
-    console.log(Método: ${req.method}, Ruta: ${req.path});
+    console.log(`Método: ${req.method}, Ruta: ${req.path}`);
 
     // Lógica para la ruta GET /buscar-registro
     if (req.method === 'GET' && req.path === '/buscar-registro') {
